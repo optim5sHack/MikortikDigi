@@ -86,6 +86,7 @@ Start TLS: yes
 
 ## Creo los dispositivos que voy a monitorizar con repetición de 1 minuto
 # Hay que repetir este ejemplo tantas veces como equipos se requiera monitorizar
+# Cuidado con los dispositivos iPhone porque el sistema usa el ahorro de energía y cambia de rutas Wi-Fi/datos o filtra en respuestas ICMP, lo que provoca respuestas irregulares aunque la red siga funcionando, (mi consejo es NO monitorizar los iPhone)
 Tools > NetWatch > New
 -----------------------------------------------
 #Host
