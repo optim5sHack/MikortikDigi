@@ -59,10 +59,58 @@ Channel width 20/40Mhrz XX
 Frecuency: auto
 SSID: <nombre del ssid>
 security profile: digi_security
-
 -----------------------------------------------
 
 ## Con esta parte ya deberíamos tener wifi
+
+
+==================================================================================================================
+## ⚡ Configuración de monitorización de equipos:
+
+## Configurar servidor DNS
+# Para Gmail es necesario utilizar una contraseña de aplicación que no es la misma que la contraseña de acceso al correo
+Tools > E-mail
+-----------------------------------------------
+# Esta es la configuración para Gmail
+Server: smtp.gmail.com
+Port: 587
+From: tuemail@gmail.com
+User: tuemail@gmail.com
+Password: TU_PASSWORD_APP
+Start TLS: yes
+-----------------------------------------------
+
+## Pruebo confoiguración de correo
+# terminal
+/tool e-mail send to="tuemail@gmail.com" subject="PRUEBA" body="Funciona"
+
+## Creo los dispositivos que voy a monitorizar con repetición de 1 minuto
+# Hay que repetir este ejemplo tantas veces como equipos se requiera monitorizar
+Tools > NetWatch > New
+-----------------------------------------------
+#Host
+Enabled: [x]
+Comment: TV-SALON
+Host: 192.168.1.250
+Interval: 00:01:00
+Timeout: 1000
+#Up
+OnUp: 
+#-
+/tool e-mail send \
+to="micorreo@gmail.com" \
+subject="📬 MikroHack: TV-SALON activado"" \
+body="Equipo TV-SALON (192.168.1.250): 🟢 encendido."
+#-
+#Down
+Down:
+#-
+/tool e-mail send \
+to="micorreo@gmail.com" \
+subject="📬 MikroHack: TV-SALON desactivado" \
+body="Equipo TV-SALON (192.168.1.250): 🔴 apagado."
+#-
+-----------------------------------------------
 
 
 ==================================================================================================================
@@ -85,36 +133,3 @@ toggle-wifi: toggle-wifi
 # terminal
 /system routerboard mode-button set enabled=yes on-event=toggle-wifi
 
-# -
-## Script - monitor interno de dispositivos: 
-# System > Scripts
------------------------------------------------
-"ping-check": "script de la carpeta /scripts/ping-check de este repositorio"
------------------------------------------------
-
-## Configurar servidor DNS
-Tools > E-mail
------------------------------------------------
-# Esta es la configuración para Gmail
-Server: smtp.gmail.com
-Port: 587
-From: tuemail@gmail.com
-User: tuemail@gmail.com
-Password: TU_PASSWORD_APP
-Start TLS: yes
------------------------------------------------
-
-## Pruebo confoiguración de correo
-# terminal
-/tool e-mail send to="tuemail@gmail.com" subject="PRUEBA" body="Funciona"
-
-# Genero una tarea de 5 minutos
-System > Scheduler > +
------------------------------------------------
-Enabled: [x]
-Comment: monitor.optim5sHack
-Name: monitor.optim5sHack
-Interval: 00:05:00
-Policy: read, write, test
-On Event: ping-check
------------------------------------------------
