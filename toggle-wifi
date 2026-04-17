@@ -1,0 +1,17 @@
+Comment: toggle-wifi
+Name: toggle-wifi
+Dont´t require permissions: [x]
+Policy: write, read, policy, test
+Source:
+--------------------------------------------------------------------------------
+:local w1 [/interface wireless find where name="wlan1"]
+:local w2 [/interface wireless find where name="wlan2"]
+
+:if ([/interface wireless get $w1 disabled] = false) do={
+    /interface wireless set $w1 disabled=yes
+    :log info "WiFi APAGADO (botón)"
+} else={
+    /interface wireless set $w1 disabled=no
+    :log info "WiFi ENCENDIDO (botón)"
+}
+--------------------------------------------------------------------------------
