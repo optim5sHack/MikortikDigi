@@ -1,1 +1,120 @@
+==================================================================================================================
+## ⚡ CONFIGURACIÓN PPoE:
 
+## cambio contraseña
+system > password > cambiar contraseña
+
+## creo vlan
+interfaces > new > vlan
+-----------------------------------------------
+Name: vlan_digi
+VLAN ID: 20
+Interface: ether1
+-----------------------------------------------
+
+## creo PPoE
+interfaces > new > PPoE client
+-----------------------------------------------
+# general
+name: ppoe-out1
+interfaces: vlan_digi
+# dial out
+User: "usuario-digi"
+Password: "contraseña-digi"
+[x] User peer Route
+-----------------------------------------------
+
+## cambiar masquerade: traducción de direcciones (NAT dinámico) cuando tu red interna sale a Internet
+IP > firewall > NAT
+-----------------------------------------------
+# masquerade
+out.interface: ppoe-out1
+out.interface.lins: -
+-----------------------------------------------
+
+## Con esto ya configurado deberíamos ir a interfaces y ver los Tx y Rx porque ya deberíamos tener señal de internet
+
+
+==================================================================================================================
+## ⚡ WIFI:
+
+## Wifi - usuario
+-----------------------------------------------
+name: digi_security
+mode: dynamics key
+[x] WPA2 PSK
+Unicast ciphers: [x] aes ccm
+Group Cippers: [x] aes ccm
+Wpa2 Pre-Shared key: <contraseña-para-el-wifi>
+
+-----------------------------------------------
+
+## Wifi - configuración
+Wireless > Wireless interface
+# normalmente tengo dos así que deshabilito una
+-----------------------------------------------
+mode: ap bridge
+band: 2Ghx -B/G/N
+Channel width 20/40Mhrz XX
+Frecuency: auto
+SSID: <nombre del ssid>
+security profile: digi_security
+
+-----------------------------------------------
+
+## Con esta parte ya deberíamos tener wifi
+
+
+==================================================================================================================
+## ⚡ Scripts:
+
+# -
+## Script - apagar wifi: 
+# System > Scripts
+-----------------------------------------------
+"toggle-wifi": "script de la carpeta /scripts/toggle-wifi de este repositorio"
+-----------------------------------------------
+
+## Configurar espera de botón
+System > RouterBOARD > Mode Button:
+Enabled: [x]
+Hold Time: 0..2
+toggle-wifi: toggle-wifi
+
+## Asociar el script al botón mode (el de al lado del USB en el modelo Mikortik hAPac²)
+# terminal
+/system routerboard mode-button set enabled=yes on-event=toggle-wifi
+
+# -
+## Script - monitor interno de dispositivos: 
+# System > Scripts
+-----------------------------------------------
+"ping-check": "script de la carpeta /scripts/ping-check de este repositorio"
+-----------------------------------------------
+
+## Configurar servidor DNS
+Tools > E-mail
+-----------------------------------------------
+# Esta es la configuración para Gmail
+Server: smtp.gmail.com
+Port: 587
+From: tuemail@gmail.com
+User: tuemail@gmail.com
+Password: TU_PASSWORD_APP
+Start TLS: yes
+-----------------------------------------------
+
+## Pruebo confoiguración de correo
+# terminal
+/tool e-mail send to="tuemail@gmail.com" subject="PRUEBA" body="Funciona"
+
+# Genero una tarea de 5 minutos
+System > Scheduler > +
+-----------------------------------------------
+Enabled: [x]
+Comment: monitor.optim5sHack
+Name: monitor.optim5sHack
+Interval: 00:05:00
+Policy: read, write, test
+On Event: ping-check
+-----------------------------------------------
